@@ -2,19 +2,30 @@ import React, {useEffect, useState} from 'react'
 import appwriteService from "../appwrite/config";
 import { PostCard} from '../components/index.js'
 import Container from '../components/container/Container.jsx'
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { setPosts as setPostState } from '../store/postSlice.js';
 
 function Home() {
     const [posts, setPosts] = useState([])
-
+    const dispatch = useDispatch()
     const authStatus = useSelector((state) => state.auth.status)
+    const postState = useSelector((state) => state.post.posts)
 
     useEffect(() => {
-        appwriteService.getPosts().then((posts) => {
-            if (posts.documents) {
-                setPosts(posts.documents)
-            }
-        })
+        if(postState){
+            console.log("postState available")
+            setPosts(postState)
+
+        }else{
+
+            appwriteService.getPosts().then((posts) => {
+                console.log(`posts : `, posts)
+                if (posts.documents) {
+                    setPosts(posts.documents)
+                    dispatch(setPostState(posts.documents))
+                }
+            })
+        }
     }, [])
   
     if (posts.length === 0 && !authStatus) {

@@ -2,6 +2,7 @@ import React from 'react'
 import { useDispatch } from 'react-redux'
 import authService from '../../appwrite/auth'
 import { logout } from '../../store/authSlice'
+import {setPosts as setPostState} from '../../store/postSlice'
 
 function LogoutBtn() {
     const dispatch = useDispatch()
@@ -9,6 +10,7 @@ function LogoutBtn() {
     const logoutHandler = () => {
         authService.logout().then(()=> {
             dispatch(logout());
+            dispatch(setPostState(null))
         }).catch((error) => {
             console.error("Appwrite Service :: logout :: error", error);
         })
